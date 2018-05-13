@@ -8,9 +8,9 @@
 
   <!-- Bootstrap CSS -->
   <!-- Latest compiled and minified CSS -->
-  <link rel="stylesheet" href="./stylesheets/bootstrap.min.css" />
+  <link rel="stylesheet" href="./stylesheets/bootstrap.css" />
   <link rel="stylesheet" href="./stylesheets/bootstrap-theme.css" />
-  <link rel="stylesheet" href="./stylesheets/bootstrap-datepicker3.min.css" />
+  <link rel="stylesheet" href="./stylesheets/bootstrap-datepicker3.css" />
 
   <style>
     .container {
@@ -70,18 +70,12 @@
           <thead>
             <tr>
               <th scope="col">项目</th>
-              <th scope="col">First</th>
-              <th scope="col">Last</th>
-              <th scope="col">Handle</th>
+              <th scope="col">A</th>
+              <th scope="col">B</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <th scope="row">1</th>
-              <td>Mark</td>
-              <td>Otto</td>
-              <td>@mdo</td>
-            </tr>
+            <tr is="proj-record" v-for="(record, index) in projRecords" v-bind:key="index" v-bind:record="record" v-bind:index="index"></tr>
           </tbody>
         </table>
       </div>
@@ -89,19 +83,13 @@
         <table class="table">
           <thead>
             <tr>
-              <th scope="col">借款人</th>
-              <th scope="col">First</th>
-              <th scope="col">Last</th>
-              <th scope="col">Handle</th>
+              <th scope="col">项目</th>
+              <th scope="col">A</th>
+              <th scope="col">B</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <th scope="row">1</th>
-              <td>Mark</td>
-              <td>Otto</td>
-              <td>@mdo</td>
-            </tr>
+            <tr is="bor-record" v-for="(record, index) in borRecords" v-bind:key="index" v-bind:record="record" v-bind:index="index"></tr>
           </tbody>
         </table>
       </div>
@@ -109,19 +97,13 @@
         <table class="table">
           <thead>
             <tr>
-              <th scope="col">出借人</th>
-              <th scope="col">First</th>
-              <th scope="col">Last</th>
-              <th scope="col">Handle</th>
+              <th scope="col">项目</th>
+              <th scope="col">A</th>
+              <th scope="col">B</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <th scope="row">1</th>
-              <td>Mark</td>
-              <td>Otto</td>
-              <td>@mdo</td>
-            </tr>
+            <tr is="inv-record" v-for="(record, index) in invRecords" v-bind:key="index" v-bind:record="record" v-bind:index="index"></tr>
           </tbody>
         </table>
       </div>
@@ -138,7 +120,7 @@
             <h4 class="modal-title">操作提示</h4>
           </div>
           <div class="modal-body">
-            <p class="modal-body-text">日期无效，请返回重新选择。</p>
+            <p class="modal-body-text">操作无效，请返回重新选择。</p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -172,135 +154,242 @@
   </div>
 
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-  <script src="./javascripts/jquery.slim.min.js"></script>
+  <script src="./javascripts/jquery.js"></script>
   <!-- Latest compiled and minified JavaScript -->
-  <script src="./javascripts/bootstrap.min.js"></script>
-  <script src="./javascripts/bootstrap-datepicker.min.js"></script>
-  <script src="./javascripts/bootstrap-datepicker.zh-CN.min.js"></script>
+  <script src="./javascripts/bootstrap.js"></script>
+  <script src="./javascripts/bootstrap-datepicker.js"></script>
+  <script src="./javascripts/bootstrap-datepicker.zh-CN.js"></script>
+
+  <script src="./javascripts/vue.js"></script>
 
   <!-- Optional JavaScript -->
   <script lang="JavaScript">
-      $(document).ready(function () {
-        // Init DatePicker component
-        $('#datepicker').datepicker({
-          format: "yyyy/mm/dd",
-          startDate: "2018/05/10",
-          endDate: "-1d",
-          daysOfWeekHighlighted: "0,6",
-          forceParse: true,
-          // defaultViewDate: "2018/05/11",
-          // startView: 1,
-          // todayBtn: true,
-          clearBtn: true,
-          language: "zh-CN",
-          autoclose: true,
-          todayHighlight: true
-        });
-        // $('#datepicker').on('changeDate', function () {
-        //   console.log($('#datepicker').datepicker('getFormattedDate'));
-        // });
-        $('#datepicker').datepicker("setDate", "-1d");
-  
-        // Init button events
-        $("#btn-review").click(function () {
-          if(!$("#inputdate").val()){
-            $("#modal-notice").modal("show");
-            return false;
-          }
-  
-          console.log("review data for date '%s'", $("#inputdate").val());
-        });
-  
-        $("#btn-upload").click(function () {
-          if(!$("#inputdate").val()){
-            $("#modal-notice").modal("show");
-            return false;
-          }
-  
-          $("#user-action").val("upload");
-          $("#modal-confirm").modal("show");
-  
-          console.log("upload data for date '%s'", $("#inputdate").val());
-        });
-  
-        $("#btn-generate").click(function () {
-          if(!$("#inputdate").val()){
-            $("#modal-notice").modal("show");
-            return false;
-          }
-  
-          $("#user-action").val("generate");
-          $("#modal-confirm").modal("show");
-  
-          console.log("regenerate data for date '%s'", $("#inputdate").val());
-        });
-  
-        //Init modal component
-        $('#modal-confirm').on('show.bs.modal', function (event) {
-          // var button = $(event.relatedTarget) // Button that triggered the modal
-          // var recipient = button.data('whatever') // Extract info from data-* attributes
-          var recipient = $("#user-action").val();
-          // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-          // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-          var modal = $(this)
-          console.log(recipient);
-          switch (recipient) {
-            case "upload":
-              modal.find('.modal-title').text("操作确认")
-              modal.find('.modal-body .modal-body-text').text("即将进行接口文件上传，点击【确认】继续。");
-              break;
-            case "generate":
-              modal.find('.modal-title').text("操作确认")
-              modal.find('.modal-body .modal-body-text').text("即将进行接口数据重新生成，点击【确认】继续。");
-              break;
-            default:
-              break;
-          }
-        })
-  
-        $("#modal-btn-confirm").click(function(){
-          switch($("#user-action").val()){
-            case "upload":
-              break;
-            case "generate":
-              break;
-            default:
-              break;
-          }
-  
-          $("#user-action").val("");
-        })
-  
-        $("#modal-btn-cancel").click(function(){
-          $("#user-action").val("");
-        })
-  
+    $(document).ready(function () {
+      //Init global variables for later binding between DOM and VUE
+      // var projRecords = [];
+
+      //Init vue components
+      Vue.component('proj-record', {
+        props: ["record", "index"],
+        template: `<tr>
+                  <th scope="row">{{ index + 1 }}</th>
+                  <td>{{ record.a }}</td>
+                  <td>{{ record.b }}</td>
+                </tr>`
+      });
+      Vue.component('bor-record', {
+        props: ["record", "index"],
+        template: `<tr>
+                  <th scope="row">{{ index + 1 }}</th>
+                  <td>{{ record.a }}</td>
+                  <td>{{ record.b }}</td>
+                </tr>`
+      });
+      Vue.component('inv-record', {
+        props: ["record", "index"],
+        template: `<tr>
+                  <th scope="row">{{ index + 1 }}</th>
+                  <td>{{ record.a }}</td>
+                  <td>{{ record.b }}</td>
+                </tr>`
+      });
+
+      var vmTabContent = new Vue({
+        el: '#myTabContent',
+        data: {
+          projRecords: [],
+          borRecords: [],
+          invRecords: []
+        },
+        created: function () {
+          // `this` 指向 vm 实例
+          // console.log('projRecords created');
+          // console.log(this.projRecords);
+        },
+        updated: function () {
+          // console.log('projRecords updated');
+          // console.log(this.projRecords[0]);
+        }
       })
-  
-      function RestApiClient(){
-        this.getProjData = function(inputDate){
-  
+
+      //Init restfull api client
+      var apiClient = new RestApiClient(vmTabContent);
+
+      // Init DatePicker component
+      $('#datepicker').datepicker({
+        format: "yyyy/mm/dd",
+        startDate: "2018/05/10",
+        endDate: "-1d",
+        daysOfWeekHighlighted: "0,6",
+        forceParse: true,
+        // defaultViewDate: "2018/05/11",
+        // startView: 1,
+        // todayBtn: true,
+        clearBtn: true,
+        language: "zh-CN",
+        autoclose: true,
+        todayHighlight: true
+      });
+      // $('#datepicker').on('changeDate', function () {
+      //   console.log($('#datepicker').datepicker('getFormattedDate'));
+      // });
+      $('#datepicker').datepicker("setDate", "-1d");
+
+      // Init button events
+      $("#btn-review").click(function () {
+        if (!$("#inputdate").val()) {
+          $(".modal-body-text").text("日期无效，请返回重新选择。");
+          $("#modal-notice").modal("show");
+          return false;
         }
-  
-        this.getBorData = function(inputDate){
-  
+
+        apiClient.getProjData($("#inputdate").val());
+        apiClient.getBorData($("#inputdate").val());
+        apiClient.getInvData($("#inputdate").val());
+      });
+
+      $("#btn-upload").click(function () {
+        if (!$("#inputdate").val()) {
+          $(".modal-body-text").text("日期无效，请返回重新选择。");
+          $("#modal-notice").modal("show");
+          return false;
         }
-  
-        this.getInvData = function(inputDate){
-  
+
+        $("#user-action").val("upload");
+        $("#modal-confirm").modal("show");
+
+        // console.log("upload data for date '%s'", $("#inputdate").val());
+      });
+
+      $("#btn-generate").click(function () {
+        if (!$("#inputdate").val()) {
+          $(".modal-body-text").text("日期无效，请返回重新选择。");
+          $("#modal-notice").modal("show");
+          return false;
         }
-  
-        this.uploadFiles = function(inputDate){
-  
+
+        $("#user-action").val("generate");
+        $("#modal-confirm").modal("show");
+
+        // console.log("regenerate data for date '%s'", $("#inputdate").val());
+      });
+
+      //Init modal component
+      $('#modal-confirm').on('show.bs.modal', function (event) {
+        // var button = $(event.relatedTarget) // Button that triggered the modal
+        // var recipient = button.data('whatever') // Extract info from data-* attributes
+        var recipient = $("#user-action").val();
+        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+        var modal = $(this)
+        // console.log(recipient);
+        switch (recipient) {
+          case "upload":
+            modal.find('.modal-title').text("操作确认")
+            modal.find('.modal-body .modal-body-text').text("即将进行接口文件上传，点击【确认】继续。");
+            break;
+          case "generate":
+            modal.find('.modal-title').text("操作确认")
+            modal.find('.modal-body .modal-body-text').text("即将进行接口数据重新生成，点击【确认】继续。");
+            break;
+          default:
+            break;
         }
-  
-        this.regenerateData = function(inputDate){
-  
+      })
+
+      $("#modal-btn-confirm").click(function () {
+
+        $("#modal-confirm").modal("hide");
+
+        switch ($("#user-action").val()) {
+          case "upload":
+            apiClient.uploadFiles($("#inputdate").val());
+            break;
+          case "generate":
+            apiClient.regenerateData($("#inputdate").val());
+            break;
+          default:
+            break;
         }
+
+        $("#user-action").val("");
+      })
+
+      $("#modal-btn-cancel").click(function () {
+        $("#user-action").val("");
+      })
+
+    })
+
+    function RestApiClient(vm) {
+      this.getProjData = function (inputDate) {
+        $.getJSON("./mock/getProjData.json",
+          function (data, status) {
+            // console.log(status);
+            // console.log(data);
+            vm.$data.projRecords = data[inputDate];
+          }).fail(function () {
+          // console.log("fail");
+        }).always(function () {
+          // console.log("complete");
+        });
       }
-  
-  
-    </script>
+
+      this.getBorData = function (inputDate) {
+        $.getJSON("./mock/getBorData.json",
+          function (data, status) {
+            // console.log(status);
+            // console.log(data);
+            vm.$data.borRecords = data[inputDate];
+          }).fail(function () {
+          // console.log("fail");
+        }).always(function () {
+          // console.log("complete");
+        });
+      }
+
+      this.getInvData = function (inputDate) {
+        $.getJSON("./mock/getInvData.json",
+          function (data, status) {
+            // console.log(status);
+            // console.log(data);
+            vm.$data.invRecords = data[inputDate];
+          }).fail(function () {
+          // console.log("fail");
+        }).always(function () {
+          // console.log("complete");
+        });
+      }
+
+      this.uploadFiles = function (inputDate) {
+        $.getJSON("./mock/uploadFiles.json",
+          function (data, status) {
+            // console.log(status);
+            console.log(data);
+            $(".modal-body-text").text("接口文件上传成功。");
+            $("#modal-notice").modal("show");
+          }).fail(function () {
+          // console.log("fail");
+        }).always(function () {
+          // console.log("complete");
+        });
+      }
+
+      this.regenerateData = function (inputDate) {
+        $.getJSON("./mock/regenerateData.json",
+          function (data, status) {
+            // console.log(status);
+            console.log(data);
+            $(".modal-body-text").text("接口数据已生成。");
+            $("#modal-notice").modal("show");
+          }).fail(function () {
+          // console.log("fail");
+        }).always(function () {
+          // console.log("complete");
+        });
+      }
+    }
+  </script>
 
 </body>
 
